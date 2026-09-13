@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import pool from './db.js';
+import cors from 'cors';
 
 // cookies
 import cookieParser from 'cookie-parser';
@@ -9,13 +10,19 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoute.js';
 import adminRoutes from './routes/adminRoute.js';
 
-
 dotenv.config({ path: './.env' });
 
 console.log('Database User Check:', process.env.DB_USER);
 
 
 const app = express();
+
+//fronted access
+
+app.use(cors({
+    origin: 'http://localhost:5173', 
+    credentials: true 
+}));
 
 app.use(cookieParser());
 
@@ -32,3 +39,4 @@ app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(pool.connect);
 });
+
