@@ -7,6 +7,7 @@ import cookieParser from 'cookie-parser';
 
 // routes
 import authRoutes from './routes/authRoute.js';
+import adminRoutes from './routes/adminRoute.js';
 
 
 dotenv.config({ path: './.env' });
@@ -20,6 +21,7 @@ app.use(cookieParser());
 
 app.use(express.json());
 app.use('/api/auth', authRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'Server is running smoothly' });
