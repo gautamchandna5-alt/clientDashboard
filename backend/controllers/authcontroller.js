@@ -105,3 +105,29 @@ export const register = async (req, res) => {
         res.status(500).json({ message: 'Server error during login.' });
     }
     }
+
+
+    // cookie-parser middleware
+    export const refreshToken = async (req, res) => {
+    const token = req.cookies.refreshToken; 
+    
+    if (!token) return res.status(401).json({ message: 'Not authenticated.' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+
+        const userQuery = await pool.query('SELECT * FROM users WHERE id = $1 AND refresh_token = $2', [decoded.id, token]);
+        
+        if (userQuery.rows.length === 0) {
+            return res.status(403).json({ message: 'Invalid refresh token.' });
+        }
+
+        const user = userQuery.rows[0];
+
+        const newAccessToken = generateAccessToken(user);
+
+        res.status(200).json({ accessToken: newAccessToken });
+    } catch (error) {
+        return res.status(403).json({ message: 'Invalid or expired refresh token.' });
+    }
+};
