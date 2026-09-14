@@ -97,3 +97,34 @@ export const getAdminOverview = async (req, res) => {
         res.status(500).json({ message: 'Server error fetching overview data' });
     }
 };
+
+
+// Delete a project and all its associated tasks
+export const deleteProject = async (req, res) => {
+    const { projectId } = req.params;
+    try {
+        const result = await pool.query("DELETE FROM projects WHERE id = $1 RETURNING *", [projectId]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+        res.status(200).json({ message: 'Project and associated tasks deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting project:', error);
+        res.status(500).json({ message: 'Server error deleting project' });
+    }
+};
+
+// Delete a single standalone task
+export const deleteTask = async (req, res) => {
+    const { taskId } = req.params;
+    try {
+        const result = await pool.query("DELETE FROM tasks WHERE id = $1 RETURNING *", [taskId]);
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+        res.status(200).json({ message: 'Task deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting task:', error);
+        res.status(500).json({ message: 'Server error deleting task' });
+    }
+};

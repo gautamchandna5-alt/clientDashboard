@@ -7,7 +7,6 @@ interface ProjectOverview { id: number; title: string; pm_name: string; created_
 interface TaskOverview { id: number; description: string; status: string; dev_name: string; project_title: string; pm_name: string; }
 
 const AdminDashboard = () => {
-    // 1. Extract accessToken alongside clearAuth
     const { clearAuth, accessToken } = useAuth();
     
     // Existing State
@@ -20,11 +19,11 @@ const AdminDashboard = () => {
     const [selectedPm, setSelectedPm] = useState('');
     const [message, setMessage] = useState('');
 
-    // 2. New State for Creating a User
+    // User Creation State
     const [createName, setCreateName] = useState('');
     const [createEmail, setCreateEmail] = useState('');
     const [createPassword, setCreatePassword] = useState('');
-    const [createRole, setCreateRole] = useState('DEVELOPER'); // Default dropdown value
+    const [createRole, setCreateRole] = useState('DEVELOPER'); 
     const [userMessage, setUserMessage] = useState('');
     const [userError, setUserError] = useState('');
 
@@ -46,7 +45,6 @@ const AdminDashboard = () => {
         fetchData();
     }, [fetchData]);
 
-    // 3. New Function to Handle User Creation
     const handleCreateUser = async (e: React.FormEvent) => {
         e.preventDefault();
         setUserMessage('');
@@ -54,28 +52,16 @@ const AdminDashboard = () => {
 
         try {
             await api.post('/admin/create-user', 
-                // The JSON Body
-                { 
-                    name: createName, 
-                    email: createEmail, 
-                    password: createPassword, 
-                    role: createRole 
-                },
-                // The Authorization Header
-                {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`
-                    }
-                }
+                { name: createName, email: createEmail, password: createPassword, role: createRole },
+                { headers: { Authorization: `Bearer ${accessToken}` } }
             );
             
             setUserMessage(`${createRole} created successfully!`);
             setCreateName('');
             setCreateEmail('');
             setCreatePassword('');
-            setCreateRole('DEVELOPER'); // Reset to default
+            setCreateRole('DEVELOPER');
             
-            // If we created a PM, instantly refresh the PM dropdown list
             if (createRole === 'PROJECT_MANAGER') {
                 fetchData(); 
             }
@@ -97,6 +83,34 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDeleteProject = async (projectId: number) => {
+        if (!window.confirm('Are you sure? This will delete the project and ALL associated tasks.')) return;
+        
+        try {
+            await api.delete(`/admin/projects/${projectId}`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            fetchData(); 
+        } catch (err) {
+            console.error('Failed to delete project', err);
+            alert('Failed to delete project');
+        }
+    };
+
+    const handleDeleteTask = async (taskId: number) => {
+        if (!window.confirm('Are you sure you want to delete this task?')) return;
+        
+        try {
+            await api.delete(`/admin/tasks/${taskId}`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            });
+            fetchData(); 
+        } catch (err) {
+            console.error('Failed to delete task', err);
+            alert('Failed to delete task');
+        }
+    };
+
     return (
         <div style={{ maxWidth: '1000px', margin: '50px auto', fontFamily: 'sans-serif' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
@@ -105,7 +119,7 @@ const AdminDashboard = () => {
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '40px' }}>
-                {/* 4. New Form: Create Team Member */}
+                {/* Form: Create Team Member */}
                 <div style={{ backgroundColor: '#e9ecef', padding: '20px', borderRadius: '6px' }}>
                     <h3 style={{ marginTop: 0 }}>Create Team Member</h3>
                     {userMessage && <div style={{ color: 'green', marginBottom: '10px' }}>{userMessage}</div>}
@@ -127,7 +141,7 @@ const AdminDashboard = () => {
                     </form>
                 </div>
 
-                {/* Existing Form: Assign Project */}
+                {/* Form: Assign Project */}
                 <div style={{ backgroundColor: '#f0f4f8', padding: '20px', borderRadius: '6px' }}>
                     <h3 style={{ marginTop: 0 }}>Assign New Project</h3>
                     {message && <div style={{ color: 'green', marginBottom: '10px' }}>{message}</div>}
@@ -153,9 +167,17 @@ const AdminDashboard = () => {
                 <div>
                     <h3>All Assigned Projects</h3>
                     {projects.map(p => (
-                        <div key={p.id} style={{ border: '1px solid #ddd', padding: '10px', marginBottom: '10px', borderRadius: '4px' }}>
-                            <strong>{p.title}</strong><br/>
-                            <small style={{ color: 'gray' }}>Assigned to: {p.pm_name}</small>
+                        <div key={p.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <strong>{p.title}</strong><br/>
+                                <small style={{ color: 'gray' }}>Assigned to: {p.pm_name}</small>
+                            </div>
+                            <button 
+                                onClick={() => handleDeleteProject(p.id)}
+                                style={{ padding: '6px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                            >
+                                Delete
+                            </button>
                         </div>
                     ))}
                 </div>
@@ -164,10 +186,18 @@ const AdminDashboard = () => {
                 <div>
                     <h3>Global Dev Tasks</h3>
                     {tasks.map(t => (
-                        <div key={t.id} style={{ border: '1px solid #ddd', padding: '10px', marginBottom: '10px', borderRadius: '4px' }}>
-                            <strong>{t.description}</strong> ({t.status})<br/>
-                            <small style={{ color: 'gray' }}>Dev: {t.dev_name} | PM: {t.pm_name}</small><br/>
-                            <small style={{ color: 'gray' }}>Project: {t.project_title}</small>
+                        <div key={t.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div>
+                                <strong>{t.description}</strong> ({t.status})<br/>
+                                <small style={{ color: 'gray' }}>Dev: {t.dev_name} | PM: {t.pm_name}</small><br/>
+                                <small style={{ color: 'gray' }}>Project: {t.project_title}</small>
+                            </div>
+                            <button 
+                                onClick={() => handleDeleteTask(t.id)}
+                                style={{ padding: '6px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
+                            >
+                                Delete
+                            </button>
                         </div>
                     ))}
                 </div>
