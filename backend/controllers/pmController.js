@@ -15,8 +15,6 @@ export const getMyProjects = async (req, res) => {
     }
 };
 
-// Add these below your existing getMyProjects function
-
 export const getDevelopers = async (req, res) => {
     try {
         const result = await pool.query(

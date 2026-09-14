@@ -4,8 +4,8 @@ import { getMyProjects, getDevelopers, createTask, getAssignedTasks } from '../c
 const router = express.Router();
 
 router.get('/projects/:pmId', getMyProjects);
-router.get('/developers', getDevelopers); // Fetch dev list
-router.post('/tasks', createTask);        // Submit new task
+router.get('/developers', getDevelopers);
+router.post('/tasks', createTask);
 router.get('/assigned-tasks/:pmId', getAssignedTasks);
 
 export default router;
