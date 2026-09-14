@@ -22,7 +22,7 @@ const app = express();
 //fronted access
 
 app.use(cors({
-    origin: 'http://localhost:5173', 
+    origin: 'https://clientdashboard-qazvqb7qh-pspspsps.vercel.app/', 
     credentials: true 
 }));
 
