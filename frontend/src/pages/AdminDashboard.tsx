@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
+import styles from '../styles/AdminDashboard.module.css';
 
 interface ProjectManager { id: number; name: string; email: string; }
 interface ProjectOverview { id: number; title: string; pm_name: string; created_at: string; }
@@ -112,70 +113,67 @@ const AdminDashboard = () => {
     };
 
     return (
-        <div style={{ maxWidth: '1000px', margin: '50px auto', fontFamily: 'sans-serif' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <div className={styles.adminContainer}>
+            <div className={styles.adminHeader}>
                 <h2>Admin Global Dashboard</h2>
-                <button onClick={clearAuth} style={{ padding: '8px 16px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Logout</button>
+                <button onClick={clearAuth} className={styles.btnLogout}>Logout</button>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px', marginBottom: '40px' }}>
+            <div className={styles.adminGrid}>
                 {/* Form: Create Team Member */}
-                <div style={{ backgroundColor: '#e9ecef', padding: '20px', borderRadius: '6px' }}>
-                    <h3 style={{ marginTop: 0 }}>Create Team Member</h3>
-                    {userMessage && <div style={{ color: 'green', marginBottom: '10px' }}>{userMessage}</div>}
-                    {userError && <div style={{ color: 'red', marginBottom: '10px' }}>{userError}</div>}
+                <div className={styles.formCard}>
+                    <h3>Create Team Member</h3>
+                    {userMessage && <div className={styles.msgSuccess}>{userMessage}</div>}
+                    {userError && <div className={styles.msgError}>{userError}</div>}
                     
-                    <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <input type="text" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Full Name" required style={{ padding: '8px' }}/>
-                        <input type="email" value={createEmail} onChange={(e) => setCreateEmail(e.target.value)} placeholder="Email Address" required style={{ padding: '8px' }}/>
-                        <input type="password" value={createPassword} onChange={(e) => setCreatePassword(e.target.value)} placeholder="Temporary Password" required style={{ padding: '8px' }}/>
+                    <form onSubmit={handleCreateUser} className={styles.adminForm}>
+                        <input type="text" value={createName} onChange={(e) => setCreateName(e.target.value)} placeholder="Full Name" required className={styles.formInput}/>
+                        <input type="email" value={createEmail} onChange={(e) => setCreateEmail(e.target.value)} placeholder="Email Address" required className={styles.formInput}/>
+                        <input type="password" value={createPassword} onChange={(e) => setCreatePassword(e.target.value)} placeholder="Temporary Password" required className={styles.formInput}/>
                         
-                        <select value={createRole} onChange={(e) => setCreateRole(e.target.value)} required style={{ padding: '8px' }}>
+                        <select value={createRole} onChange={(e) => setCreateRole(e.target.value)} required className={styles.formInput}>
                             <option value="DEVELOPER">Developer</option>
                             <option value="PROJECT_MANAGER">Project Manager</option>
                         </select>
                         
-                        <button type="submit" style={{ padding: '10px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        <button type="submit" className={styles.btnSubmitSuccess}>
                             Create User
                         </button>
                     </form>
                 </div>
 
                 {/* Form: Assign Project */}
-                <div style={{ backgroundColor: '#f0f4f8', padding: '20px', borderRadius: '6px' }}>
-                    <h3 style={{ marginTop: 0 }}>Assign New Project</h3>
-                    {message && <div style={{ color: 'green', marginBottom: '10px' }}>{message}</div>}
+                <div className={styles.formCardAlt}>
+                    <h3>Assign New Project</h3>
+                    {message && <div className={styles.msgSuccess}>{message}</div>}
                     
-                    <form onSubmit={handleCreateProject} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Project Title" required style={{ padding: '8px' }}/>
-                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Project Description (Optional)" rows={2} style={{ padding: '8px' }}/>
+                    <form onSubmit={handleCreateProject} className={styles.adminForm}>
+                        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Project Title (e.g. Adolescent Diet Tracker)" required className={styles.formInput}/>
+                        <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Project Description (Optional)" rows={2} className={styles.formInput}/>
                         
-                        <select value={selectedPm} onChange={(e) => setSelectedPm(e.target.value)} required style={{ padding: '8px' }}>
+                        <select value={selectedPm} onChange={(e) => setSelectedPm(e.target.value)} required className={styles.formInput}>
                             <option value="" disabled>Select a PM...</option>
                             {pms.map(pm => <option key={pm.id} value={pm.id}>{pm.name}</option>)}
                         </select>
                         
-                        <button type="submit" style={{ padding: '10px', backgroundColor: '#0066cc', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                        <button type="submit" className={styles.btnSubmitPrimary}>
                             Assign Project
                         </button>
                     </form>
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+            <div className={styles.adminGrid}>
                 {/* Project List */}
                 <div>
                     <h3>All Assigned Projects</h3>
                     {projects.map(p => (
-                        <div key={p.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={p.id} className={styles.listItem}>
                             <div>
-                                <strong>{p.title}</strong><br/>
-                                <small style={{ color: 'gray' }}>Assigned to: {p.pm_name}</small>
+                                <strong>{p.title}</strong>
+                                <small className={styles.listItemMeta}>Assigned to: {p.pm_name}</small>
                             </div>
-                            <button 
-                                onClick={() => handleDeleteProject(p.id)}
-                                style={{ padding: '6px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                            >
+                            <button onClick={() => handleDeleteProject(p.id)} className={styles.btnDelete}>
                                 Delete
                             </button>
                         </div>
@@ -186,16 +184,13 @@ const AdminDashboard = () => {
                 <div>
                     <h3>Global Dev Tasks</h3>
                     {tasks.map(t => (
-                        <div key={t.id} style={{ border: '1px solid #ddd', padding: '15px', marginBottom: '10px', borderRadius: '4px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div key={t.id} className={styles.listItem}>
                             <div>
-                                <strong>{t.description}</strong> ({t.status})<br/>
-                                <small style={{ color: 'gray' }}>Dev: {t.dev_name} | PM: {t.pm_name}</small><br/>
-                                <small style={{ color: 'gray' }}>Project: {t.project_title}</small>
+                                <strong>{t.description}</strong> ({t.status})
+                                <small className={styles.listItemMeta}>Dev: {t.dev_name} | PM: {t.pm_name}</small>
+                                <small className={styles.listItemMeta}>Project: {t.project_title}</small>
                             </div>
-                            <button 
-                                onClick={() => handleDeleteTask(t.id)}
-                                style={{ padding: '6px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}
-                            >
+                            <button onClick={() => handleDeleteTask(t.id)} className={styles.btnDelete}>
                                 Delete
                             </button>
                         </div>

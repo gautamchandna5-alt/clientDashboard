@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { api } from '../api/axios';
+import styles from '../styles/DevDashboard.module.css';
 
 interface Task {
     id: number;
@@ -33,7 +34,7 @@ const DevDashboard = () => {
     const handleCompleteTask = async (taskId: number) => {
         try {
             await api.patch(`/dev/tasks/${taskId}/complete`);
-            fetchTasks(); // Instantly refresh the UI to show the new status
+            fetchTasks(); 
         } catch (err) {
             console.error("Failed to update task", err);
             setError('Could not update task status.');
@@ -41,53 +42,45 @@ const DevDashboard = () => {
     };
 
     return (
-        <div style={{ maxWidth: '800px', margin: '50px auto', fontFamily: 'sans-serif' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
+        <div className={styles.devContainer}>
+            <div className={styles.devHeader}>
                 <div>
-                    <h2 style={{ margin: 0 }}>Developer Dashboard</h2>
-                    <p style={{ color: 'gray', margin: '5px 0 0 0' }}>Welcome back, {user?.name}</p>
+                    <h2>Developer Dashboard</h2>
+                    <p className={styles.devSubtitle}>Welcome back, {user?.name}</p>
                 </div>
-                <button 
-                    onClick={clearAuth} 
-                    style={{ padding: '8px 16px', cursor: 'pointer', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px' }}
-                >
+                <button onClick={clearAuth} className={styles.btnLogout}>
                     Logout
                 </button>
             </div>
 
-            {error && <div style={{ color: 'red', marginBottom: '15px', padding: '10px', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>{error}</div>}
+            {error && <div className={styles.msgError}>{error}</div>}
 
             <h3>Your Task Backlog</h3>
             
             {tasks.length === 0 ? (
-                <p style={{ color: 'gray', padding: '20px', border: '1px dashed #ccc', textAlign: 'center' }}>
+                <p className={styles.emptyState}>
                     No tasks currently assigned to you.
                 </p>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                <div className={styles.taskList}>
                     {tasks.map((task) => (
-                        <div key={task.id} style={{ 
-                            border: '1px solid #ddd', 
-                            padding: '15px', 
-                            borderRadius: '6px', 
-                            backgroundColor: task.status === 'COMPLETED' ? '#f0fff0' : '#fff',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center'
-                        }}>
-                            <div>
-                                <h4 style={{ margin: '0 0 5px 0' }}>{task.description}</h4>
-                                <small style={{ color: 'gray' }}>Project: {task.project_title}</small>
+                        <div 
+                            key={task.id} 
+                            className={`${styles.taskItem} ${task.status === 'COMPLETED' ? styles.taskItemCompleted : ''}`}
+                        >
+                            <div className={styles.taskInfo}>
+                                <h4>{task.description}</h4>
+                                <small className={styles.taskProject}>Project: {task.project_title}</small>
                             </div>
                             
-                            <div style={{ textAlign: 'right' }}>
-                                <div style={{ marginBottom: '8px', fontWeight: 'bold', color: task.status === 'COMPLETED' ? 'green' : '#cc7700' }}>
+                            <div className={styles.taskActions}>
+                                <div className={task.status === 'COMPLETED' ? styles.statusCompleted : styles.statusPending}>
                                     {task.status}
                                 </div>
                                 {task.status !== 'COMPLETED' && (
                                     <button 
                                         onClick={() => handleCompleteTask(task.id)}
-                                        style={{ padding: '6px 12px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                        className={styles.btnComplete}
                                     >
                                         Mark as Done
                                     </button>
