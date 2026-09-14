@@ -13,20 +13,6 @@ const AuthPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    if (user) {
-        return (
-            <div style={{ maxWidth: '400px', margin: '100px auto', textAlign: 'center', fontFamily: 'sans-serif' }}>
-                <h2>Welcome, {user.name}</h2>
-                <h4 style={{ color: 'gray' }}>Role: {user.role}</h4>
-                <button 
-                    onClick={clearAuth}
-                    style={{ marginTop: '20px', padding: '8px 16px', cursor: 'pointer' }}
-                >
-                    Logout
-                </button>
-            </div>
-        );
-    }
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
