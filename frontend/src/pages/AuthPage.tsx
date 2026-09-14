@@ -3,7 +3,7 @@ import { useAuth } from '../context/AuthContext.tsx';
 import { api } from '../api/axios.ts';
 
 const AuthPage = () => {
-    const { user, setAuth, clearAuth } = useAuth();
+    const { setAuth } = useAuth();
     
     const [isLogin, setIsLogin] = useState(true);
     const [message, setMessage] = useState('');
