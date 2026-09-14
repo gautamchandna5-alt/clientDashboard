@@ -93,7 +93,7 @@ Password Reset: No SMTP service is configured; forgot-password flows are not yet
 
 
 
-### Explanation Field (Submit this in the required text box)
+### Explanation Field
 
 The hardest problem I solved during this project was implementing secure JWT authentication from scratch, as it was a completely new concept for me. Grasping the lifecycle of tokens—specifically, orchestrating short-lived access tokens in React's volatile memory and long-lived refresh tokens in HttpOnly cookies—required a deep dive into web security. Figuring out how to configure CORS to make Vercel and Render communicate securely across domains with `sameSite: 'none'` and `credentials: true` was a major, but highly rewarding, learning curve.
 
