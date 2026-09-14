@@ -100,3 +100,9 @@ The hardest problem I solved during this project was implementing secure JWT aut
 Because I did not have enough time to implement WebSockets for a true real-time role-filtered feed, I designed a workaround using strict REST architecture. I handled the feed by building precise PostgreSQL `JOIN` queries that filter data exclusively by the user's role ID on the backend. On the frontend, I utilized React's `useEffect` and `useCallback` hooks to aggressively trigger a localized data re-fetch whenever an action (like assigning or completing a task) occurs, mimicking a live feed without manual page reloads.
 
 If I could do one thing differently, I would integrate Socket.io from the very beginning. Relying on REST API refetches works well for this scale, but having a persistent WebSocket connection would significantly reduce backend load and provide a much smoother, inherently real-time user experience.
+
+
+
+Please use admin@gmail.com for admin
+pm1@gmail.com and pm2@gmail.com for project managers
+and dev1@gmail.com to dev6@gmail.com for developers and password will be 1234 for all 
