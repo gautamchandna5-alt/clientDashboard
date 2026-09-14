@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 import authRoutes from './routes/authRoute.js';
 import adminRoutes from './routes/adminRoute.js';
 import pmRoutes from './routes/pmRoute.js';
+import devRoutes from './routes/devRoute.js';
 
 dotenv.config({ path: './.env' });
 
@@ -31,6 +32,7 @@ app.use(express.json());
 app.use('/api/pm', pmRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/dev', devRoutes);
 
 app.get('/api/health', (req, res) => {
     res.status(200).json({ status: 'Server is running smoothly' });

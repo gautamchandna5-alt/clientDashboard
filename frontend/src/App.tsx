@@ -1,7 +1,8 @@
 import { useAuth } from './context/AuthContext';
 import AuthPage from './pages/AuthPage';
 import AdminDashboard from './pages/AdminDashboard';
-import PmDashboard from './pages/PmDashboard'; // Import the new dashboard
+import PmDashboard from './pages/PmDashboard';
+import DevDashboard from './pages/DevDashboard'; // Import the Dev dashboard
 
 const App = () => {
     const { user } = useAuth();
@@ -15,14 +16,18 @@ const App = () => {
     }
 
     if (user.role === 'PROJECT_MANAGER') {
-        return <PmDashboard />; 
+        return <PmDashboard />;
     }
 
-    // Fallback for Developers
+    if (user.role === 'DEVELOPER') {
+        return <DevDashboard />; // Route Developers here
+    }
+
+    // Ultimate fallback if a user has an invalid role
     return (
         <div style={{ textAlign: 'center', marginTop: '50px', fontFamily: 'sans-serif' }}>
-            <h2>Welcome, {user.name}</h2>
-            <p>Your {user.role} dashboard is under construction.</p>
+            <h2>Error: Unrecognized User Role</h2>
+            <button onClick={useAuth().clearAuth}>Logout</button>
         </div>
     );
 };
